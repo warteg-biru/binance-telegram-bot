@@ -27,4 +27,23 @@ def get_staking_projects():
 
             staking_projects.append(project_dict)
     
-    return staking_projects
+    return to_paragraph(staking_projects)
+
+
+def to_paragraph(staking_projects):
+    paragraph = ""
+    for p in staking_projects:
+        paragraph += f'{p["asset"]} \n'
+        paragraph += "-------------------------------------------- \n"
+        paragraph += f'Project ID \t\t: {p["projectId"]}\n'
+        paragraph += f'Up Limit \t\t: {p["upLimit"]}\n'
+        paragraph += f'Purchased \t\t: {p["purchased"]}\n'
+        paragraph += f'Duration \t\t: {p["duration"]}\n'
+        paragraph += f'Annual Interest Rate \t: {p["annualInterestRate"]}\n'
+        paragraph += f'Sold Out? \t\t: {"Yes" if p["sellOut"] == True else "No"}\n'
+        paragraph += "\n\n"
+
+    print(paragraph)
+
+
+get_staking_projects()
