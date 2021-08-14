@@ -1,2 +1,1 @@
-from .run_scheduled_service import run_scheduled_service
-from .run_scheduled_cake_service import run_scheduled_cake_service
+from .run_scheduled_stake_checking_service import run_scheduled_stake_checking_service

@@ -1,10 +1,13 @@
 import requests
 from common.get_bot import get_bot
+from common.get_db import get_db
 from common.to_paragraph import to_paragraph
 
-def run_scheduled_cake_service():
+def run_scheduled_stake_checking_service():
     bot = get_bot()
-    chat_id = "-541835006"
+    db = get_db()
+    # chat_id = "-541835006"
+    chat_id = "1185228338"
 
     PAGE_SIZE = 200 # max page size is 200
     r = requests.get(f"https://www.binance.com/bapi/earn/v1/friendly/pos/union?pageSize={PAGE_SIZE}&pageIndex=1&status=ALL")
@@ -25,7 +28,7 @@ def run_scheduled_cake_service():
             project_dict["annualInterestRate"] = int(float(p["config"]["annualInterestRate"]) * 100)
             project_dict["soldOut"] = p["sellOut"]
 
-            if project_dict["annualInterestRate"] > 40 and not project_dict["soldOut"]:
+            if project_dict["annualInterestRate"] > 20 and not project_dict["soldOut"]:
                 staking_projects.append(project_dict)
 
         if len(staking_projects) > 0:

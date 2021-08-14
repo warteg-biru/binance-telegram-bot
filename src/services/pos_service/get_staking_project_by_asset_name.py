@@ -1,12 +1,25 @@
 import requests
 from common.to_paragraph import to_paragraph
 
-def get_staking_project_by_asset_name(bot, chat_id, asset_name):
+def get_staking_project_by_asset_name(bot, chat_id, received_message):
+    args = received_message.split(" ")
+    
+    if len(args) <= 1:
+        bot.send_message(chat_id=chat_id, text="Command arguments cannot be empty!")
+        return
+
+    asset_name = args[1].upper()
+    percentage = 0
+    if len(args) > 2 and args[2].isnumeric(): # Expected percentage is 0 by default unless argument passed
+        percentage = int(args[2])
+
     PAGE_SIZE = 200 # max page size is 200
     r = requests.get(f"https://www.binance.com/bapi/earn/v1/friendly/pos/union?pageSize={PAGE_SIZE}&pageIndex=1&status=ALL")
     
     data = r.json()["data"]
     staking_projects = []
+
+    bot.send_message(chat_id=chat_id, text="Searching for asset ID and percentage combination...")
     for d in data:
         projects = d["projects"]
         for p in projects:
@@ -21,9 +34,13 @@ def get_staking_project_by_asset_name(bot, chat_id, asset_name):
             project_dict["annualInterestRate"] = int(float(p["config"]["annualInterestRate"]) * 100)
             project_dict["soldOut"] = p["sellOut"]
 
-            if project_dict["asset"] == asset_name:
+            if project_dict["asset"] == asset_name and project_dict["annualInterestRate"] > percentage:
                 staking_projects.append(project_dict)
 
         if len(staking_projects) > 0:
-            bot.send_message(chat_id=chat_id, text=to_paragraph(staking_projects))
-        staking_projects = []
+            break
+
+    if len(staking_projects) > 0:
+        bot.send_message(chat_id=chat_id, text=to_paragraph(staking_projects))
+    else:
+        bot.send_message(chat_id=chat_id, text="Asset and percentage combination doesn't exist!")
